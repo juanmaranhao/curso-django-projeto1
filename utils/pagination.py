@@ -8,19 +8,25 @@ def make_pagination_range(
     current_page
 ):
 
-    middle_range = math.ceil(qty_pages / 2)
-    start_range = current_page - middle_range
-    stop_range = current_page + middle_range
-    total_pages = len(page_range)
+    if qty_pages >= 4:
+        middle_range = math.ceil(qty_pages / 2)
+        start_range = current_page - middle_range
+        stop_range = current_page + middle_range
+        total_pages = len(page_range)
 
-    start_range_offset = abs(start_range) if start_range < 0 else 0
+        start_range_offset = abs(start_range) if start_range < 0 else 0
 
-    if start_range < 0:
-        start_range = 0
-        stop_range += start_range_offset
+        if start_range < 0:
+            start_range = 0
+            stop_range += start_range_offset
 
-    if stop_range >= total_pages:
-        start_range = start_range - abs(total_pages - stop_range)
+        if stop_range >= total_pages:
+            start_range = start_range - abs(total_pages - stop_range)
+    else:
+        middle_range = 2
+        total_pages = len(page_range)
+        start_range = 1
+        stop_range = qty_pages
 
     pagination = page_range[start_range:stop_range]
     return {
@@ -44,6 +50,9 @@ def make_pagination(request, queryset, per_page, qty_pages=4):
 
     paginator = Paginator(queryset, per_page)
     page_obj = paginator.get_page(current_page)
+
+    if paginator.num_pages < qty_pages:
+        qty_pages = paginator.num_pages
 
     pagination_range = make_pagination_range(
         paginator.page_range,

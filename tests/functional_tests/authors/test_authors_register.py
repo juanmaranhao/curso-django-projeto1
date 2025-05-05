@@ -1,15 +1,11 @@
 from tests.functional_tests.authors.base import AuthorsBaseTest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+import pytest
 
 
+@pytest.mark.functional_test
 class AuthorsRegisterTest(AuthorsBaseTest):
-    def get_by_placeholder(self, web_element, placeholder):
-        return web_element.find_element(
-            By.XPATH,
-            f'//input[@placeholder="{placeholder}"]'
-        )
-
     def get_form(self):
         return self.browser.find_element(
             By.XPATH,

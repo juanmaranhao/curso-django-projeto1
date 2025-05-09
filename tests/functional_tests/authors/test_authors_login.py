@@ -3,6 +3,9 @@ from tests.functional_tests.authors.base import AuthorsBaseTest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+
+from utils.browser import make_chrome_browser
 
 User = get_user_model()
 
@@ -33,8 +36,14 @@ class AuthorsLoginTest(AuthorsBaseTest):
         form.submit()
 
         # Usuário vê a messagem de login com sucesso e seu nome
-        # Re-locate the body element to avoid stale element reference
+        # Re-locate the body element after form submission to avoid
+        # stale element reference
+        wait = WebDriverWait(self.browser, timeout=2)
+        wait.until(lambda _: self.browser.find_element(
+            By.TAG_NAME, 'body').is_displayed())
+
         body_element = self.browser.find_element(By.TAG_NAME, 'body')
+
         self.assertIn(
             f'You are logged in with {user.username}.',
             body_element.text
@@ -69,10 +78,15 @@ class AuthorsLoginTest(AuthorsBaseTest):
         # Usuário envia o formulário
         form.submit()
 
+        wait = WebDriverWait(make_chrome_browser(), timeout=2)
+        wait.until(lambda _: self.browser.find_element(
+            By.TAG_NAME, 'body').is_displayed())
+
+        body_element = self.browser.find_element(By.TAG_NAME, 'body')
         # Usuário vê a messagem de erro ao tentar logar
         self.assertIn(
             'Invalid username or password',
-            self.browser.find_element(By.TAG_NAME, 'body').text
+            body_element.text
         )
 
     def test_login_with_invalid_credentials(self):
@@ -92,9 +106,16 @@ class AuthorsLoginTest(AuthorsBaseTest):
 
         # Usuário envia o formulário
         form.submit()
+        # Re-locate the body element after form submission to avoid
+        # stale element reference
+        # self.browser.refresh()
+        wait = WebDriverWait(make_chrome_browser(), timeout=2)
+        wait.until(lambda _: self.browser.find_element(
+            By.TAG_NAME, 'body').is_displayed())
 
-        # Usuário vê a messagem de erro ao tentar logar
+        body_element = self.browser.find_element(By.TAG_NAME, 'body')
+
         self.assertIn(
             'Invalid credentials',
-            self.browser.find_element(By.TAG_NAME, 'body').text
+            body_element.text
         )

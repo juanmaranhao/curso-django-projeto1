@@ -85,7 +85,11 @@
                     Tags:
                     {% for tag in recipe.tags.all %}
                         <a href="{% url 'recipes:tag' tag.slug %}" class="tag">
-                            {{ tag.name }}
+                            {% if recipe.tags.all.last.name == tag.name %}
+                                {{ tag.name }}
+                            {% else %}
+                                {{ tag.name }},
+                            {% endif %}
                         </a>
                     {% endfor %}
                 </p>

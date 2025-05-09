@@ -153,3 +153,8 @@ MESSAGE_TAGS = {
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+# Django CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.infinitumsol.com.br'
+]
